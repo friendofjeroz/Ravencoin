@@ -5864,6 +5864,15 @@ bool IsRestrictedActive(unsigned int nBlockNumber)
     }
 }
 
+bool AreP2SHAssetsAllowed()
+{
+    const ThresholdState thresholdState = VersionBitsTipState(GetParams().GetConsensus(), Consensus::DEPLOYMENT_P2SH_ASSETS);
+    if (thresholdState == THRESHOLD_ACTIVE)
+        return true;
+
+    return false;
+}
+
 CAssetsCache* GetCurrentAssetCache()
 {
     return passets;

@@ -3515,12 +3515,15 @@ bool GetAssetData(const CScript& script, CAssetOutputEntry& data)
     std::string assetName = "";
 
     int nType = 0;
+    int nScriptType = 0;
     bool fIsOwner = false;
-    if (!script.IsAssetScript(nType, fIsOwner)) {
+    if (!script.IsAssetScript(nType, nScriptType, fIsOwner)) {
         return false;
     }
 
     txnouttype type = txnouttype(nType);
+    txnouttype scriptType = txnouttype(nScriptType);
+    data.scriptType = scriptType;
 
     // Get the New Asset or Transfer Asset from the scriptPubKey
     if (type == TX_NEW_ASSET && !fIsOwner) {
