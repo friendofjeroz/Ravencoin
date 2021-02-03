@@ -1953,9 +1953,25 @@ UniValue signrawtransaction(const JSONRPCRequest& request)
                 view.AddCoin(out, std::move(newcoin), true);
             }
 
+
+            // We need to be able to sign P2SH that are also asset transactions
+            // The following code checks to see if the script is an asset script
+            // and enables this boolean which will let the wallet sign asset P2SH transactions
+            bool fIsAssetScriptHash = false;
+
+            int nType = 0;
+            int nAssetType = 0;
+            bool fOwner = false;
+
+            if (scriptPubKey.IsAssetScript(nType, nAssetType, fOwner)) {
+                if (nAssetType == TX_SCRIPTHASH){
+                    fIsAssetScriptHash = true;
+                }
+            }
+
             // if redeemScript given and not using the local wallet (private keys
             // given), add redeemScript to the tempKeystore so it can be signed:
-            if (fGivenKeys && (scriptPubKey.IsPayToScriptHash() || scriptPubKey.IsPayToWitnessScriptHash())) {
+            if (fGivenKeys && (scriptPubKey.IsPayToScriptHash() || scriptPubKey.IsPayToWitnessScriptHash() || fIsAssetScriptHash)) {
                 RPCTypeCheckObj(prevOut,
                     {
                         {"txid", UniValueType(UniValue::VSTR)},

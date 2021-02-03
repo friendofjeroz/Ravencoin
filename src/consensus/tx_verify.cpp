@@ -828,8 +828,9 @@ bool Consensus::CheckTxAssets(const CTransaction& tx, CValidationState& state, c
         } else {
             for (auto out : tx.vout) {
                 int nType;
+                int nScriptType;
                 bool _isOwner;
-                if (out.scriptPubKey.IsAssetScript(nType, _isOwner)) {
+                if (out.scriptPubKey.IsAssetScript(nType, nScriptType, _isOwner)) {
                     if (nType != TX_TRANSFER_ASSET) {
                         return state.DoS(100, false, REJECT_INVALID, "bad-txns-bad-asset-transaction", false, "", tx.GetHash());
                     }
