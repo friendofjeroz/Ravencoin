@@ -391,13 +391,13 @@ class AssetTest(RavenTestFramework):
         self.sync_all()
 
         # Check to see if asset is in wallet asset list
-        # my_assets = n0.listmyassets(asset_name, True)
+        my_assets = n0.listmyassets(asset_name, True)
 
-        # self.log.info("Checking if asset data is in our wallet...")
-        # assert_equal(asset_name in my_assets, True)
-        # assert_equal(asset_name + '!' in my_assets, True)
-        # assert_equal(my_assets[asset_name]['balance'], 100)
-        # assert_equal(my_assets[asset_name + '!']['balance'], 1)
+        self.log.info("Checking if asset data is in our wallet...")
+        assert_equal(asset_name in my_assets, True)
+        assert_equal(asset_name + '!' in my_assets, True)
+        assert_equal(my_assets[asset_name]['balance'], 100)
+        assert_equal(my_assets[asset_name + '!']['balance'], 1)
 
 
         self.log.info("Calling transfer() to a P2PKH address...")
