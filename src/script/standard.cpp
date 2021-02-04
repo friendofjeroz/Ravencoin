@@ -159,6 +159,7 @@ bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, txnouttype& script
                     if (m < 1 || n < 1 || m > n || vSolutionsRet.size()-2 != n)
                         return false;
                 }
+
                 return true;
             }
             if (!script1.GetOp(pc1, opcode1, vch1))

@@ -300,6 +300,15 @@ bool CScript::IsAssetScript(int& nType, int& nScriptType, bool& fIsOwner, int& n
     return false;
 }
 
+bool CScript::IsP2SHAssetScript() const
+{
+    int nType = 0;
+    int nScriptType = 0;
+    bool isOwner = false;
+    IsAssetScript(nType, nScriptType, isOwner);
+    return nScriptType == TX_SCRIPTHASH;
+}
+
 
 bool CScript::IsNewAsset() const
 {

@@ -654,7 +654,8 @@ bool Consensus::CheckTxAssets(const CTransaction& tx, CValidationState& state, c
     for (const auto& txout : tx.vout) {
         i++;
         bool fIsAsset = false;
-        int nType, nScriptType = 0;
+        int nType = 0;
+        int nScriptType = 0;
         bool fIsOwner = false;
         if (txout.scriptPubKey.IsAssetScript(nType, nScriptType, fIsOwner))
             fIsAsset = true;
@@ -692,7 +693,8 @@ bool Consensus::CheckTxAssets(const CTransaction& tx, CValidationState& state, c
             CAssetTransfer transfer;
             std::string address = "";
             if (!TransferAssetFromScript(txout.scriptPubKey, transfer, address))
-                return state.DoS(100, false, REJECT_INVALID, "bad-tx-asset-transfer-bad-deserialize", false, "", tx.GetHash());
+                return state.DoS(100, false, REJECT_INVALID, "bad-tx-asset-transfer-bad-deserialize", false, "",
+                                 tx.GetHash());
 
             if (!ContextualCheckTransferAsset(assetCache, transfer, address, strError))
                 return state.DoS(100, false, REJECT_INVALID, strError, false, "", tx.GetHash());
