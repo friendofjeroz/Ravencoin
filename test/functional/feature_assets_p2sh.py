@@ -368,6 +368,52 @@ class AssetTest(RavenTestFramework):
 
         assert_equal(len(txid), 64)
 
+    def p2sh_using_rpc_console_test(self):
+        self.log.info("Running p2sh_using_rpc_console_test")
+        n0, n1 = self.nodes[0], self.nodes[1]
+
+        asset_name = 'P2SH_ASSET_RPC_CONSOLE'
+
+        # Generate address
+        first_address = n0.getnewaddress()
+
+        # Create a 1-of-1 P2SH multisig address
+        multisig_address = n0.addmultisigaddress(1, [first_address])
+
+        # Issue asset to multisig address
+        self.log.info("Calling issue() to P2SH address")
+        ipfs_hash = "QmcvyefkqQX3PpjpY5L8B2yMd47XrVwAipr6cxUt2zvYU8"
+        issue_txid = n0.issue(asset_name=asset_name, qty=100, to_address=multisig_address, change_address="",
+                              units=8, reissuable=True, has_ipfs=True, ipfs_hash=ipfs_hash)
+
+        self.log.info("Waiting for one confirmations after P2SH issue...")
+        n0.generate(1)
+        self.sync_all()
+
+        # Check to see if asset is in wallet asset list
+        # my_assets = n0.listmyassets(asset_name, True)
+
+        # self.log.info("Checking if asset data is in our wallet...")
+        # assert_equal(asset_name in my_assets, True)
+        # assert_equal(asset_name + '!' in my_assets, True)
+        # assert_equal(my_assets[asset_name]['balance'], 100)
+        # assert_equal(my_assets[asset_name + '!']['balance'], 1)
+
+
+        self.log.info("Calling transfer() to a P2PKH address...")
+        transfer_txid = n0.transfer(asset_name, 50, first_address, "", 0, "", multisig_address)
+
+        self.log.info("Waiting for one confirmations after P2SH transfer...")
+        n0.generate(1)
+        self.sync_all()
+
+        self.log.info("Checking address database")
+        balances_P2PKH = n0.listassetbalancesbyaddress(first_address)
+        balances_P2SH = n0.listassetbalancesbyaddress(multisig_address)
+        assert_equal(balances_P2PKH[asset_name], 50)
+        assert_equal(balances_P2SH[asset_name], 50)
+        assert_equal(balances_P2SH[asset_name + '!'], 1)
+
 
     def run_test(self):
         self.activate_p2sh_assets()
@@ -375,9 +421,7 @@ class AssetTest(RavenTestFramework):
         self.p2sh_1of2_single_node_asset_transfer_test()
         self.p2sh_2of3_multi_nodes_rvn_send_test()
         self.p2sh_2of3_multi_nodes_asset_transfer_test()
-        # self.p2sh_multisig_spend_asset_multiple_node_test()
-        # self.p2sh_issue_asset_test()
-        # self.p2sh_asset_test()
+        self.p2sh_using_rpc_console_test()
 
 
 if __name__ == '__main__':
